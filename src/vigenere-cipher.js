@@ -20,33 +20,30 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-
   constructor (direction) {
     this.validLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    this.direction = Boolean(direction === undefined) || Boolean(direction);
+    this.direction = direction === undefined || Boolean(direction);
   }
-
   checkArg(message, key) {
     if (!message || !key || message === null || key === null || 
       message === '' || key === '' || typeof message !== 'string' || typeof key !== 'string') {
       throw new Error ('Incorrect arguments!');
     }
   }
-
   encrypt(message, key) {
-    this.checkArg(message, key)
+    this.checkArg(message, key);
+    let msgToEncrypt = message.toUpperCase();
     let msgEnc = '';
     let newKey = '';
-    let msgToEncrypt = message.toUpperCase();
     const lettersCounterEnc = msgToEncrypt.match(/[A-Z]/g).length;
-    if (this.direction  === false) {
+    if (this.direction === false) {
       msgToEncrypt = msgToEncrypt.split('').reverse().join('');
     };
     for (let i = 0; i < lettersCounterEnc; i++) {
       newKey += key[i % key.length];
     };
     newKey = newKey.toUpperCase();
-    if (this.direction  === false) {
+    if (this.direction === false) {
       newKey = newKey.split().reverse().join('');
     };
     let msgLttrInd = 0;
@@ -64,6 +61,42 @@ class VigenereCipheringMachine {
     };
     return msgEnc;
   };
+  decrypt(message, key) {
+    this.checkArg(message, key);
+    let msgToDec = message.toUpperCase();
+    let newKeyDec = '';
+    let msgDec = '';
+    const lettersCounterDec = msgToDec.match(/[A-Z]/g).length;
+    for (let i = 0; i < lettersCounterDec; i++) {
+      newKeyDec += key[i % key.length];
+    };
+    newKeyDec = newKeyDec.toUpperCase();
+    if (this.direction === false) {
+      msgToDec = msgToDec.split('').reverse().join('');
+    };
+    if (this.direction === false) {
+      newKeyDec = newKeyDec.split().reverse().join('');
+    };
+
+    let msgLttrInd = 0;
+    let passLttrInd = 0;
+    let passLttrCounter = 0;
+    let indCheck;
+    for (let i = 0; i < msgToDec.length; i++) {
+      msgLttrInd = this.validLetters.indexOf(msgToDec[i]);
+      passLttrInd = this.validLetters.indexOf(newKeyDec[passLttrCounter]);
+      if (msgLttrInd >= 0) {
+        indCheck = msgLttrInd - passLttrInd;
+        indCheck = indCheck > 0 ? indCheck : indCheck + this.validLetters.length;
+        msgDec += this.validLetters[indCheck % this.validLetters.length];
+        passLttrCounter = (passLttrCounter + 1) % newKeyDec.length;
+      } else {
+        msgDec += msgToDec[i];
+      }
+    }
+    return msgDec;
+  }
+
 }
 
 module.exports = {

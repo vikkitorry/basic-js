@@ -11,7 +11,17 @@ const { NotImplementedError } = require('../extensions/index.js');
  *
  */
 function encodeLine(str) {
-  return 
+  let res = [];
+  let counter = 1;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === str[i + 1]) {
+      counter++;
+    } else {
+      res.push(counter + str[i]);
+      counter = 1;
+    }
+  }
+  return res.join('').replace(/1/g, '');
 }
 
 module.exports = {

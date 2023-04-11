@@ -23,7 +23,20 @@ const { NotImplementedError } = require('../extensions/index.js');
  *
  */
 function getDNSStats(domains) {
-  return
+  let result = {};
+  const domainsArr = domains.map((el) => el.split('.').reverse());
+  domainsArr.forEach((item) => {
+    let counter = '';
+    for (let i = 0; i < item.length; i++) {
+      counter += `.${item[i]}`;
+      if (result[counter]) {
+        result[counter] = result[counter] + 1
+      } else {
+        result[counter] = 1
+      }
+    };
+  });
+  return result;
 }
 
 module.exports = {

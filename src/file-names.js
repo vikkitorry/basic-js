@@ -16,7 +16,21 @@ const { NotImplementedError } = require('../extensions/index.js');
  *
  */
 function renameFiles(names) {
-  return
+  let newNames = [];
+  for (let name of names) {
+    if (newNames.includes(name)) {
+      for (let i = 1; i < names.length; i++) {
+        let newFileName = `${name}(${i})`
+        if (!newNames.includes(newFileName)) {
+          newNames.push(newFileName);
+          break;
+        }
+      }
+    } else {
+      newNames.push(name)
+    }
+  }
+  return newNames;
 }
 
 module.exports = {
